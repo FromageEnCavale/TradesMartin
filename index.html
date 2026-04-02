@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mes Positions</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; border-radius:0 !important; }
+
+:root {
+  --bg:      #0e0e10;
+  --surface: #161618;
+  --border:  #242428;
+  --profit:  #30d47a;
+  --loss:    #f04a65;
+  --dim:     #44444e;
+  --text:    #e0e0e8;
+  --white:   #ffffff;
+}
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px 40px;
+}
+
+/* ── HEADER ── */
+header {
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 36px;
+  animation: up .5s ease both;
+}
+
+.header-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 12px;
+}
+
+.total-pnl {
+  font-size: clamp(40px, 11vw, 64px);
+  font-weight: 600;
+  letter-spacing: -2px;
+  color: var(--dim);
+  transition: color .5s;
+  line-height: 1;
+}
+.total-pnl.profit { color: var(--profit); }
+.total-pnl.loss   { color: var(--loss); }
+
+.total-time {
+  margin-top: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 1px;
+}
+
+/* ── CARDS ── */
+.cards {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  animation: up .5s .08s ease both;
+}
+
+/* side by side on large enough screens */
+@media (min-width: 540px) {
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.card {
+  background: var(--surface);
+  padding: 24px 20px;
+  position: relative;
+}
+
+@media (min-width: 400px) {
+  .card { padding: 28px 24px; }
+}
+
+/* top accent line */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--border);
+  transition: background .4s;
+}
+.card.profit::before { background: var(--profit); }
+.card.loss::before   { background: var(--loss); }
+
+/* card head */
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.card-name {
+  font-size: clamp(16px, 4.5vw, 18px);
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: -.2px;
+}
+
+.badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  color: var(--dim);
+  transition: color .4s, border-color .4s;
+  flex-shrink: 0;
+}
+.card.profit .badge-long  { color: var(--profit); border-color: var(--profit); }
+.card.loss   .badge-short { color: var(--loss);   border-color: var(--loss); }
+
+/* prices */
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.price-col:last-child { text-align: right; }
+
+.price-lbl {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 7px;
+}
+
+.price-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(13px, 3.5vw, 15px);
+  color: var(--dim);
+}
+.price-num.live { color: var(--text); }
+
+/* pnl */
+.pnl-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.pnl-lbl {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.pnl-right { text-align: right; }
+
+.pnl-usd {
+  font-size: clamp(22px, 6vw, 28px);
+  font-weight: 600;
+  letter-spacing: -.5px;
+  color: var(--dim);
+  transition: color .4s;
+  line-height: 1;
+}
+.pnl-usd.profit { color: var(--profit); }
+.pnl-usd.loss   { color: var(--loss); }
+
+.pnl-pct {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--dim);
+  margin-top: 4px;
+}
+.pnl-pct.profit { color: var(--profit); opacity: .7; }
+.pnl-pct.loss   { color: var(--loss);   opacity: .7; }
+
+/* ── FOOTER ── */
+footer {
+  margin-top: 16px;
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: up .5s .16s ease both;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--dim);
+}
+
+.dot {
+  width: 6px; height: 6px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+.dot.live { background: var(--profit); animation: blink 2s infinite; }
+.dot.err  { background: var(--loss); }
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.source {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: .5px;
+  text-align: right;
+}
+
+@keyframes up {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-label">Profit / Perte total</div>
+  <div class="total-pnl" id="totalPnl">—</div>
+  <div class="total-time" id="totalTime">Chargement…</div>
+</header>
+
+<div class="cards">
+
+  <div class="card" id="cardBrent">
+    <div class="card-head">
+      <div class="card-name">Brent</div>
+      <div class="badge badge-long">LONG</div>
+    </div>
+    <div class="price-row">
+      <div class="price-col">
+        <div class="price-lbl">Entrée</div>
+        <div class="price-num">109,515 $</div>
+      </div>
+      <div class="price-col">
+        <div class="price-lbl">Actuel</div>
+        <div class="price-num live" id="brentPrice">—</div>
+      </div>
+    </div>
+    <div class="pnl-row">
+      <div class="pnl-lbl">Résultat</div>
+      <div class="pnl-right">
+        <div class="pnl-usd" id="brentPnl">—</div>
+        <div class="pnl-pct" id="brentPct"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="cardBtc">
+    <div class="card-head">
+      <div class="card-name">Bitcoin</div>
+      <div class="badge badge-short">SHORT</div>
+    </div>
+    <div class="price-row">
+      <div class="price-col">
+        <div class="price-lbl">Entrée</div>
+        <div class="price-num">67 806,75 $</div>
+      </div>
+      <div class="price-col">
+        <div class="price-lbl">Actuel</div>
+        <div class="price-num live" id="btcPrice">—</div>
+      </div>
+    </div>
+    <div class="pnl-row">
+      <div class="pnl-lbl">Résultat</div>
+      <div class="pnl-right">
+        <div class="pnl-usd" id="btcPnl">—</div>
+        <div class="pnl-pct" id="btcPct"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="status">
+    <div class="dot" id="dot"></div>
+    <span id="statusTxt">Chargement…</span>
+  </div>
+  <div class="source">Yahoo Finance</div>
+</footer>
+
+<script>
+const BRENT_ENTRY = 109.515,  BRENT_QTY = 210;
+const BTC_ENTRY   = 67806.75, BTC_QTY   = 0.51;
+const PROXY       = 'https://corsproxy.io/?url=';
+
+async function yahooPrice(symbol) {
+  const url  = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1m&range=1d`;
+  const res  = await fetch(PROXY + encodeURIComponent(url), { cache: 'no-store' });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const json  = await res.json();
+  const price = json?.chart?.result?.[0]?.meta?.regularMarketPrice;
+  if (!price) throw new Error('no price');
+  return price;
+}
+
+function fmt(n, d) {
+  return n.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+}
+
+function applyPnl(usdId, pctId, cardId, pnl, pct) {
+  const sign = pnl >= 0 ? '+' : '';
+  const cls  = pnl >= 0 ? 'profit' : 'loss';
+  document.getElementById(usdId).textContent = sign + fmt(pnl, 2) + ' $';
+  document.getElementById(usdId).className   = 'pnl-usd ' + cls;
+  document.getElementById(pctId).textContent = sign + pct.toFixed(2) + ' %';
+  document.getElementById(pctId).className   = 'pnl-pct ' + cls;
+  document.getElementById(cardId).className  = 'card ' + cls;
+}
+
+async function init() {
+  const [rB, rC] = await Promise.allSettled([
+    yahooPrice('BZ=F'),
+    yahooPrice('BTC-USD'),
+  ]);
+
+  let total = 0, ok = 0;
+
+  if (rB.status === 'fulfilled') {
+    const p   = rB.value;
+    const pnl = (p - BRENT_ENTRY) * BRENT_QTY;
+    document.getElementById('brentPrice').textContent = fmt(p, 3) + ' $';
+    applyPnl('brentPnl', 'brentPct', 'cardBrent', pnl, (p - BRENT_ENTRY) / BRENT_ENTRY * 100);
+    total += pnl; ok++;
+  }
+
+  if (rC.status === 'fulfilled') {
+    const p   = rC.value;
+    const pnl = (BTC_ENTRY - p) * BTC_QTY;
+    document.getElementById('btcPrice').textContent = fmt(p, 2) + ' $';
+    applyPnl('btcPnl', 'btcPct', 'cardBtc', pnl, (BTC_ENTRY - p) / BTC_ENTRY * 100);
+    total += pnl; ok++;
+  }
+
+  if (ok > 0) {
+    const sign = total >= 0 ? '+' : '';
+    document.getElementById('totalPnl').textContent = sign + fmt(total, 2) + ' $';
+    document.getElementById('totalPnl').className   = 'total-pnl ' + (total >= 0 ? 'profit' : 'loss');
+    document.getElementById('totalTime').textContent = 'Chargé à ' + new Date().toLocaleTimeString('fr-FR');
+  }
+
+  document.getElementById('dot').className      = ok > 0 ? 'dot live' : 'dot err';
+  document.getElementById('statusTxt').textContent =
+    ok === 2 ? 'Prix en direct' : ok === 1 ? 'Données partielles' : 'Erreur de connexion';
+}
+
+init();
+</script>
+</body>
+</html>
