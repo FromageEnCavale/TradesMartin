@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mes Positions</title>
+<title>Trades martin</title>
+<link rel="icon" href="data:,">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; border-radius:0 !important; }
@@ -319,16 +320,13 @@ footer {
 <script>
 const BRENT_ENTRY = 109.515,  BRENT_QTY = 210;
 const BTC_ENTRY   = 67806.75, BTC_QTY   = 0.51;
-const PROXY       = 'https://corsproxy.io/?url=';
 
 async function yahooPrice(symbol) {
-  const url  = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1m&range=1d`;
-  const res  = await fetch(PROXY + encodeURIComponent(url), { cache: 'no-store' });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const json  = await res.json();
-  const price = json?.chart?.result?.[0]?.meta?.regularMarketPrice;
-  if (!price) throw new Error('no price');
-  return price;
+  const res = await fetch(`/api/price?symbol=${symbol}`);
+  const json = await res.json();
+
+  if (!json.price) throw new Error('no price');
+  return json.price;
 }
 
 function fmt(n, d) {
