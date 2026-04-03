@@ -3,9 +3,9 @@
    ============================================================ */
 const POSITIONS = {
   brent: {
-    symbol: 'BRENT', 
-    // Liste des symboles testés automatiquement si "BRENT" ne marche pas
-    aliases:['UKOIL', 'OIL', '@xyz/BRENT', '@1/BRENT', '@trade/BRENT', 'WTI'], 
+    symbol: 'xyz:UKOIL', // On commence par la syntaxe trade.xyz
+    // S'il ne le trouve pas du premier coup, il testera ces variantes automatiquement
+    aliases:['xyz:UKOIL', 'xyz:BRENT', 'xyz:BRENTOIL', 'xyz:OIL', 'UKOIL', 'BRENT'], 
     entry: 109.515,
     qty: 210,
     side: 'long',
@@ -17,6 +17,7 @@ const POSITIONS = {
   },
   btc: {
     symbol: 'BTC',
+    aliases:[],
     entry: 67806.75,
     qty: 0.51,
     side: 'short',
@@ -28,34 +29,48 @@ const POSITIONS = {
   },
 };
 
-const REFRESH_INTERVAL_MS = 5_000;
+const REFRESH_INTERVAL_MS = 5_000; // Rafraîchissement toutes les 5s (gratuit et illimité)
 
 /* ============================================================
-   API HYPERLIQUID (PERPS + SPOT)
+   API HYPERLIQUID
    ============================================================ */
-async function fetchHyperliquidPrices() {
+
+// 1. Récupère tous les prix cryptos standards (BTC)
+async function fetchAllMids() {
+  const res = await fetch('https://api.hyperliquid.xyz/info', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'allMids' })
+  });
+  if (!res.ok) throw new Error('API Hyperliquid injoignable');
+  return await res.json();
+}
+
+// 2. Récupère le prix via le carnet d'ordres (spécifique pour Trade.xyz)
+async function fetchL2BookPrice(coin) {
   try {
-    // 1. Récupérer les Perpétuels
-    const resPerps = await fetch('https://api.hyperliquid.xyz/info', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'allMids' })
-    }).then(r => r.json());
-
-    // 2. Récupérer les Spot / HIP-3 (Au cas où le Brent soit là-dedans)
-    const resSpot = await fetch('https://api.hyperliquid.xyz/info', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'spotMids' })
-    }).then(r => r.json()).catch(() => ({}));
-
-    // On fusionne les deux listes de prix
-    return { ...resPerps, ...resSpot };
-  } catch (err) {
-    throw new Error('Erreur de connexion API Hyperliquid');
+    const res = await fetch('https://api.hyperliquid.xyz/info', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      // Interrogation directe du DEX
+      body: JSON.stringify({ type: 'l2Book', coin: coin })
+    });
+    const data = await res.json();
+    
+    // Si le carnet d'ordres existe pour ce ticker, on calcule le prix actuel (Mid Price)
+    if (data && data.levels && data.levels[0].length > 0 && data.levels[1].length > 0) {
+      const bid = parseFloat(data.levels[0][0].px); // Meilleur acheteur
+      const ask = parseFloat(data.levels[1][0].px); // Meilleur vendeur
+      return (bid + ask) / 2; 
+    }
+  } catch (e) {
+    // Silencieux pour permettre de tester les alias suivants
   }
+  return null;
 }
 
 /* ============================================================
-   CALCULS & RENDU
+   LOGIQUE ET CALCULS
    ============================================================ */
 function calcPnl(position, currentPrice) {
   const diff = position.side === 'long'
@@ -93,60 +108,75 @@ function renderTotal(total) {
 }
 
 function renderStatus(state) {
-  const dot = document.getElementById('dot');
-  const text = document.getElementById('statusTxt');
   const states = {
-    live: { dotClass: 'dot live', label: 'Prix en direct' },
-    partial: { dotClass: 'dot live', label: 'Données partielles' },
-    error: { dotClass: 'dot err', label: 'Erreur de connexion' },
+    live: { c: 'dot live', t: 'Prix en direct (HL L1)' },
+    partial: { c: 'dot live', t: 'Données partielles' },
+    error: { c: 'dot err', t: 'Recherche du marché XYZ...' },
   };
-  dot.className = states[state].dotClass;
-  text.textContent = states[state].label;
+  document.getElementById('dot').className = states[state].c;
+  document.getElementById('statusTxt').textContent = states[state].t;
 }
 
 /* ============================================================
-   BOUCLE PRINCIPALE
+   BOUCLE PRINCIPALE (AUTO-DISCOVERY)
    ============================================================ */
+
+async function getPriceForPosition(p, allMids) {
+  // 1. On regarde d'abord dans les prix standards de Hyperliquid (ex: BTC)
+  if (allMids[p.symbol]) return parseFloat(allMids[p.symbol]);
+  
+  // 2. Sinon, on interroge le carnet d'ordres en direct
+  let price = await fetchL2BookPrice(p.symbol);
+  if (price !== null) return price;
+
+  // 3. Si introuvable, on lance la sonde sur les alias (uniquement pour le BRENT)
+  if (p.aliases && p.aliases.length > 0) {
+    for (const alias of p.aliases) {
+      if (allMids[alias]) {
+        p.symbol = alias;
+        return parseFloat(allMids[alias]);
+      }
+      const aliasPrice = await fetchL2BookPrice(alias);
+      if (aliasPrice !== null) {
+        console.log(`[Succès L1] Marché BRENT trouvé sous le ticker : ${alias}`);
+        p.symbol = alias; // On sauvegarde ce ticker pour que la prochaine boucle soit instantanée
+        return aliasPrice;
+      }
+    }
+  }
+
+  return null; // Ticker complètement introuvable
+}
+
 async function refresh() {
   try {
-    const prices = await fetchHyperliquidPrices();
+    const allMids = await fetchAllMids();
     let total = 0;
     let resolved = 0;
+    const entries = Object.values(POSITIONS);
 
-    for (const p of Object.values(POSITIONS)) {
-      let currentPriceStr = prices[p.symbol];
+    // On traite chaque actif
+    for (const p of entries) {
+      const currentPrice = await getPriceForPosition(p, allMids);
 
-      // Si le symbole principal ne marche pas, on teste les aliases (pour le BRENT)
-      if (!currentPriceStr && p.aliases) {
-        for (const alias of p.aliases) {
-          if (prices[alias]) {
-            currentPriceStr = prices[alias];
-            console.log(`[Succès] Ticker trouvé pour le Brent : ${alias}`);
-            p.symbol = alias; // On le sauvegarde pour la prochaine fois
-            break;
-          }
-        }
+      if (currentPrice !== null) {
+        renderCard(p, currentPrice);
+        total += calcPnl(p, currentPrice).pnl;
+        resolved++;
+      } else {
+        console.warn(`[${p.symbol}] En attente du réseau L1...`);
       }
-
-      if (!currentPriceStr) {
-        console.warn(`[${p.symbol}] Introuvable. Voici la liste des actifs dispos :`, Object.keys(prices));
-        continue;
-      }
-
-      const currentPrice = parseFloat(currentPriceStr);
-      renderCard(p, currentPrice);
-      total += calcPnl(p, currentPrice).pnl;
-      resolved++;
     }
 
     if (resolved > 0) renderTotal(total);
-    renderStatus(resolved === 2 ? 'live' : (resolved > 0 ? 'partial' : 'error'));
+    renderStatus(resolved === entries.length ? 'live' : (resolved > 0 ? 'partial' : 'error'));
 
   } catch (err) {
-    console.error(err);
+    console.error("Erreur réseau :", err);
     renderStatus('error');
   }
 }
 
+// Lancement initial
 refresh();
 setInterval(refresh, REFRESH_INTERVAL_MS);
