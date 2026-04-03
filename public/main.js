@@ -43,45 +43,20 @@ const REFRESH_INTERVAL_MS = 60_000; // 60 seconds
  * @param {string} symbol
  * @returns {Promise<number>}
  */
-export default async function handler(req, res) {
-  const { symbol } = req.query;
-
-  if (!symbol) {
-    return res.status(400).json({ error: 'Missing symbol parameter' });
-  }
-
+async function fetchPrice(symbol, retries = 2) {
   try {
-    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbol)}`;
+    const res = await fetch(`/api/price?symbol=${encodeURIComponent(symbol)}`);
+    if (!res.ok) throw new Error();
 
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0',
-      },
-    });
-
-    const data = await response.json();
-
-    const result = data?.quoteResponse?.result?.[0];
-    const price = result?.regularMarketPrice;
-
-    // 🔎 DEBUG temporaire
-    if (!result) {
-      console.error('Yahoo response empty:', data);
-    }
-
-    if (typeof price !== 'number') {
-      return res.status(502).json({
-        error: 'Invalid price received',
-        debug: data,
-      });
-    }
-
-    res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate');
-
-    return res.status(200).json({ price });
+    const { price } = await res.json();
+    return price;
 
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    if (retries > 0) {
+      await new Promise(r => setTimeout(r, 500));
+      return fetchPrice(symbol, retries - 1);
+    }
+    throw err;
   }
 }
 
