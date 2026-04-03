@@ -1,104 +1,86 @@
 /* ============================================================
    CONFIG
    ============================================================ */
-
 const POSITIONS = {
   brent: {
-    symbol:    'BRENTOIL',        // Ticker sur trade.xyz / Hyperliquid (HIP-3)
-    entry:     109.515,
-    qty:       210,
-    side:      'long',         // Profit quand le prix monte
-    decimals:  3,
+    symbol: 'BRENT', 
+    // Liste des symboles testés automatiquement si "BRENT" ne marche pas
+    aliases:['UKOIL', 'OIL', '@xyz/BRENT', '@1/BRENT', '@trade/BRENT', 'WTI'], 
+    entry: 109.515,
+    qty: 210,
+    side: 'long',
+    decimals: 3,
     priceElId: 'brentPrice',
-    pnlElId:   'brentPnl',
-    pctElId:   'brentPct',
-    cardElId:  'cardBrent',
+    pnlElId: 'brentPnl',
+    pctElId: 'brentPct',
+    cardElId: 'cardBrent',
   },
   btc: {
-    symbol:    'BTC',          // Ticker sur Hyperliquid
-    entry:     67806.75,
-    qty:       0.51,
-    side:      'short',        // Profit quand le prix descend
-    decimals:  2,
+    symbol: 'BTC',
+    entry: 67806.75,
+    qty: 0.51,
+    side: 'short',
+    decimals: 2,
     priceElId: 'btcPrice',
-    pnlElId:   'btcPnl',
-    pctElId:   'btcPct',
-    cardElId:  'cardBtc',
+    pnlElId: 'btcPnl',
+    pctElId: 'btcPct',
+    cardElId: 'cardBtc',
   },
 };
 
-const REFRESH_INTERVAL_MS = 5_000; // Rafraîchissement ultra rapide (5 secondes)
+const REFRESH_INTERVAL_MS = 5_000;
 
 /* ============================================================
-   API HYPERLIQUID
+   API HYPERLIQUID (PERPS + SPOT)
    ============================================================ */
+async function fetchHyperliquidPrices() {
+  try {
+    // 1. Récupérer les Perpétuels
+    const resPerps = await fetch('https://api.hyperliquid.xyz/info', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'allMids' })
+    }).then(r => r.json());
 
-/**
- * Récupère tous les prix directement depuis le L1 d'Hyperliquid.
- * Une seule requête POST ultra légère pour tout récupérer d'un coup.
- */
-async function fetchAllPrices() {
-  const res = await fetch('https://api.hyperliquid.xyz/info', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    // On demande le "mid price" de tous les contrats
-    body: JSON.stringify({ type: 'allMids' })
-  });
+    // 2. Récupérer les Spot / HIP-3 (Au cas où le Brent soit là-dedans)
+    const resSpot = await fetch('https://api.hyperliquid.xyz/info', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'spotMids' })
+    }).then(r => r.json()).catch(() => ({}));
 
-  if (!res.ok) {
-    throw new Error(`HTTP ${res.status}`);
+    // On fusionne les deux listes de prix
+    return { ...resPerps, ...resSpot };
+  } catch (err) {
+    throw new Error('Erreur de connexion API Hyperliquid');
   }
-
-  return await res.json();
 }
 
 /* ============================================================
-   P&L CALCULATION
+   CALCULS & RENDU
    ============================================================ */
-
 function calcPnl(position, currentPrice) {
   const diff = position.side === 'long'
     ? currentPrice - position.entry
     : position.entry - currentPrice;
-
-  const pnl = diff * position.qty;
-  const pct = (diff / position.entry) * 100;
-
-  return { pnl, pct };
+  return { pnl: diff * position.qty, pct: (diff / position.entry) * 100 };
 }
 
-/* ============================================================
-   RENDER
-   ============================================================ */
-
-function fmt(value, decimals) {
-  return value.toLocaleString('fr-FR', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  });
-}
-
-function sign(value) {
-  return value >= 0 ? '+' : '';
-}
-
-function cls(value) {
-  return value >= 0 ? 'profit' : 'loss';
-}
+function fmt(value, dec) { return value.toLocaleString('fr-FR', { minimumFractionDigits: dec, maximumFractionDigits: dec }); }
+function sign(value) { return value >= 0 ? '+' : ''; }
+function cls(value) { return value >= 0 ? 'profit' : 'loss'; }
 
 function renderCard(position, currentPrice) {
   const { pnl, pct } = calcPnl(position, currentPrice);
-  const direction    = cls(pnl);
+  const direction = cls(pnl);
 
   document.getElementById(position.priceElId).textContent = fmt(currentPrice, position.decimals) + ' $';
   
   const pnlEl = document.getElementById(position.pnlElId);
   pnlEl.textContent = sign(pnl) + fmt(pnl, 2) + ' $';
-  pnlEl.className   = `result__usd ${direction}`;
+  pnlEl.className = `result__usd ${direction}`;
 
   const pctEl = document.getElementById(position.pctElId);
   pctEl.textContent = sign(pct) + pct.toFixed(2) + ' %';
-  pctEl.className   = `result__pct ${direction}`;
+  pctEl.className = `result__pct ${direction}`;
 
   document.getElementById(position.cardElId).className = `card ${direction}`;
 }
@@ -106,45 +88,48 @@ function renderCard(position, currentPrice) {
 function renderTotal(total) {
   const totalEl = document.getElementById('totalPnl');
   totalEl.textContent = sign(total) + fmt(total, 2) + ' $';
-  totalEl.className   = `summary__amount ${cls(total)}`;
-
-  document.getElementById('totalTime').textContent =
-    'Mis à jour à ' + new Date().toLocaleTimeString('fr-FR');
+  totalEl.className = `summary__amount ${cls(total)}`;
+  document.getElementById('totalTime').textContent = 'Mis à jour à ' + new Date().toLocaleTimeString('fr-FR');
 }
 
 function renderStatus(state) {
-  const dot  = document.getElementById('dot');
+  const dot = document.getElementById('dot');
   const text = document.getElementById('statusTxt');
-
   const states = {
-    live:    { dotClass: 'dot live', label: 'Prix en direct' },
+    live: { dotClass: 'dot live', label: 'Prix en direct' },
     partial: { dotClass: 'dot live', label: 'Données partielles' },
-    error:   { dotClass: 'dot err',  label: 'Erreur de connexion' },
+    error: { dotClass: 'dot err', label: 'Erreur de connexion' },
   };
-
-  const { dotClass, label } = states[state] ?? states.error;
-  dot.className   = dotClass;
-  text.textContent = label;
+  dot.className = states[state].dotClass;
+  text.textContent = states[state].label;
 }
 
 /* ============================================================
-   MAIN REFRESH LOOP
+   BOUCLE PRINCIPALE
    ============================================================ */
-
 async function refresh() {
   try {
-    const prices = await fetchAllPrices();
-    
+    const prices = await fetchHyperliquidPrices();
     let total = 0;
     let resolved = 0;
-    const entries = Object.values(POSITIONS);
 
-    for (const p of entries) {
-      // Hyperliquid renvoie les prix sous forme de string (ex: "67500.5")
-      const currentPriceStr = prices[p.symbol];
-      
+    for (const p of Object.values(POSITIONS)) {
+      let currentPriceStr = prices[p.symbol];
+
+      // Si le symbole principal ne marche pas, on teste les aliases (pour le BRENT)
+      if (!currentPriceStr && p.aliases) {
+        for (const alias of p.aliases) {
+          if (prices[alias]) {
+            currentPriceStr = prices[alias];
+            console.log(`[Succès] Ticker trouvé pour le Brent : ${alias}`);
+            p.symbol = alias; // On le sauvegarde pour la prochaine fois
+            break;
+          }
+        }
+      }
+
       if (!currentPriceStr) {
-        console.warn(`[${p.symbol}] Prix introuvable sur l'API Hyperliquid`);
+        console.warn(`[${p.symbol}] Introuvable. Voici la liste des actifs dispos :`, Object.keys(prices));
         continue;
       }
 
@@ -155,17 +140,13 @@ async function refresh() {
     }
 
     if (resolved > 0) renderTotal(total);
-
-    if (resolved === entries.length) renderStatus('live');
-    else if (resolved > 0)           renderStatus('partial');
-    else                             renderStatus('error');
+    renderStatus(resolved === 2 ? 'live' : (resolved > 0 ? 'partial' : 'error'));
 
   } catch (err) {
-    console.error('Erreur réseau Hyperliquid:', err);
+    console.error(err);
     renderStatus('error');
   }
 }
 
-// Initial fetch + polling
 refresh();
 setInterval(refresh, REFRESH_INTERVAL_MS);
