@@ -6,7 +6,7 @@
 
 const POSITIONS = {
   brent: {
-    symbol:    'UKOIL',        // Brent Crude on Twelve Data
+    symbol:    'BRENT',        // Brent Crude on Twelve Data
     entry:     109.515,
     qty:       210,
     side:      'long',         // profit when price rises
