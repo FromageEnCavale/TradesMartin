@@ -4,7 +4,7 @@
 
 const POSITIONS = {
   brent: {
-    symbol:    'BRENT',        // Ticker sur trade.xyz / Hyperliquid (HIP-3)
+    symbol:    'BRENTOIL',        // Ticker sur trade.xyz / Hyperliquid (HIP-3)
     entry:     109.515,
     qty:       210,
     side:      'long',         // Profit quand le prix monte
