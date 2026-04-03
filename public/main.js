@@ -43,21 +43,25 @@ const REFRESH_INTERVAL_MS = 60_000; // 60 seconds
  * @param {string} symbol
  * @returns {Promise<number>}
  */
-async function fetchPrice(symbol, retries = 2) {
-  try {
-    const res = await fetch(`/api/price?symbol=${encodeURIComponent(symbol)}`);
-    if (!res.ok) throw new Error();
+async function fetchPrice(symbol) {
+  const res = await fetch(
+    `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbol)}`
+  );
 
-    const { price } = await res.json();
-    return price;
-
-  } catch (err) {
-    if (retries > 0) {
-      await new Promise(r => setTimeout(r, 500));
-      return fetchPrice(symbol, retries - 1);
-    }
-    throw err;
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`);
   }
+
+  const data = await res.json();
+
+  const price =
+    data?.quoteResponse?.result?.[0]?.regularMarketPrice;
+
+  if (typeof price !== 'number') {
+    throw new Error('Invalid price');
+  }
+
+  return price;
 }
 
 
