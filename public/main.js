@@ -98,7 +98,7 @@ function renderTotal(total) {
 
 function renderStatus(state) {
     const states = {
-        live: { c: "dot live", t: "Prix en direct (HL L1)" },
+        live: { c: "dot live", t: "Prix en direct" },
         partial: { c: "dot live", t: "Données partielles" },
         error: { c: "dot err", t: "Erreur réseau" },
     };
