@@ -1,10 +1,6 @@
 /**
- * GET /api/price?symbol=UKOIL
- * Proxies Twelve Data so the API key stays server-side.
- *
- * Symbols used:
- *   UKOIL   → Brent Crude Oil
- *   BTC/USD → Bitcoin
+ * GET /api/price?symbol=AAPL
+ * Yahoo Finance proxy (no API key required)
  */
 
 export default async function handler(req, res) {
@@ -14,27 +10,21 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing symbol parameter' });
   }
 
-  const apiKey = process.env.TWELVE_DATA_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'API key not configured' });
-  }
-
   try {
-    const url = `https://api.twelvedata.com/price?symbol=${encodeURIComponent(symbol)}&apikey=${apiKey}`;
+    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbol)}`;
     const response = await fetch(url);
     const data = await response.json();
 
-    if (data.status === 'error') {
-      return res.status(502).json({ error: data.message });
-    }
+    const result = data?.quoteResponse?.result?.[0];
+    const price = result?.regularMarketPrice;
 
-    const price = parseFloat(data.price);
-    if (isNaN(price)) {
+    if (typeof price !== 'number') {
       return res.status(502).json({ error: 'Invalid price received' });
     }
 
-    // No caching — always return fresh data
-    res.setHeader('Cache-Control', 'no-store');
+    // petit cache propre (30s)
+    res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate');
+
     return res.status(200).json({ price });
 
   } catch (err) {

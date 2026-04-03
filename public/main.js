@@ -6,10 +6,10 @@
 
 const POSITIONS = {
   brent: {
-    symbol:    'BRENT',        // Brent Crude on Twelve Data
+    symbol:    'BZ=F',        // ✅ Yahoo Brent
     entry:     109.515,
     qty:       210,
-    side:      'long',         // profit when price rises
+    side:      'long',
     decimals:  3,
     priceElId: 'brentPrice',
     pnlElId:   'brentPnl',
@@ -17,10 +17,10 @@ const POSITIONS = {
     cardElId:  'cardBrent',
   },
   btc: {
-    symbol:    'BTC/USD',
+    symbol:    'BTC-USD',     // ✅ Yahoo BTC
     entry:     67806.75,
     qty:       0.51,
-    side:      'short',        // profit when price falls
+    side:      'short',
     decimals:  2,
     priceElId: 'btcPrice',
     pnlElId:   'btcPnl',
@@ -43,21 +43,21 @@ const REFRESH_INTERVAL_MS = 60_000; // 60 seconds
  * @param {string} symbol
  * @returns {Promise<number>}
  */
-async function fetchPrice(symbol) {
-  const res = await fetch(`/api/price?symbol=${encodeURIComponent(symbol)}`);
+async function fetchPrice(symbol, retries = 2) {
+  try {
+    const res = await fetch(`/api/price?symbol=${encodeURIComponent(symbol)}`);
+    if (!res.ok) throw new Error();
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error ?? `HTTP ${res.status}`);
+    const { price } = await res.json();
+    return price;
+
+  } catch (err) {
+    if (retries > 0) {
+      await new Promise(r => setTimeout(r, 500));
+      return fetchPrice(symbol, retries - 1);
+    }
+    throw err;
   }
-
-  const { price } = await res.json();
-
-  if (typeof price !== 'number' || isNaN(price)) {
-    throw new Error('Invalid price in response');
-  }
-
-  return price;
 }
 
 
