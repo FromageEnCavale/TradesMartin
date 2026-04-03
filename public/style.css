@@ -179,12 +179,12 @@ main {
         border-color 0.4s ease;
 }
 
-.card.profit .badge--long {
+.badge--long {
     color: var(--color-profit);
     border-color: var(--color-profit);
 }
 
-.card.loss .badge--short {
+.badge--short {
     color: var(--color-loss);
     border-color: var(--color-loss);
 }
