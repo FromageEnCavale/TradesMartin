@@ -23,7 +23,7 @@ const POSITIONS = {
     },
 };
 
-const REFRESH_INTERVAL_MS = 5_000; // 5 secondes, illimité sur Hyperliquid
+const REFRESH_INTERVAL_MS = 30_000; // 30 secondes, illimité sur Hyperliquid
 
 async function fetchPrice(coin) {
     const res = await fetch("https://api.hyperliquid.xyz/info", {
