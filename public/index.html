@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trades Martin</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  >
+</head>
+<body>
+
+  <main>
+
+    <!-- ── Total P&L ── -->
+    <header class="summary">
+      <p class="summary__label">Profit / Perte total</p>
+      <p class="summary__amount" id="totalPnl">—</p>
+      <p class="summary__time"   id="totalTime">Chargement…</p>
+    </header>
+
+    <!-- ── Position cards ── -->
+    <section class="positions">
+
+      <article class="card" id="cardBrent">
+        <header class="card__head">
+          <h2 class="card__name">Brent</h2>
+          <span class="badge badge--long">LONG</span>
+        </header>
+
+        <div class="card__prices">
+          <div class="price">
+            <span class="price__label">Entrée</span>
+            <span class="price__value">109 515,00 $</span>
+          </div>
+          <div class="price price--right">
+            <span class="price__label">Actuel</span>
+            <span class="price__value price__value--live" id="brentPrice">—</span>
+          </div>
+        </div>
+
+        <footer class="card__result">
+          <span class="result__label">Résultat</span>
+          <div class="result__values">
+            <span class="result__usd" id="brentPnl">—</span>
+            <span class="result__pct" id="brentPct"></span>
+          </div>
+        </footer>
+      </article>
+
+      <article class="card" id="cardBtc">
+        <header class="card__head">
+          <h2 class="card__name">Bitcoin</h2>
+          <span class="badge badge--short">SHORT</span>
+        </header>
+
+        <div class="card__prices">
+          <div class="price">
+            <span class="price__label">Entrée</span>
+            <span class="price__value">67 806,75 $</span>
+          </div>
+          <div class="price price--right">
+            <span class="price__label">Actuel</span>
+            <span class="price__value price__value--live" id="btcPrice">—</span>
+          </div>
+        </div>
+
+        <footer class="card__result">
+          <span class="result__label">Résultat</span>
+          <div class="result__values">
+            <span class="result__usd" id="btcPnl">—</span>
+            <span class="result__pct" id="btcPct"></span>
+          </div>
+        </footer>
+      </article>
+
+    </section>
+
+    <!-- ── Status bar ── -->
+    <footer class="statusbar">
+      <div class="statusbar__left">
+        <span class="dot" id="dot"></span>
+        <span class="statusbar__text" id="statusTxt">Chargement…</span>
+      </div>
+      <span class="statusbar__source">Twelve Data</span>
+    </footer>
+
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>
