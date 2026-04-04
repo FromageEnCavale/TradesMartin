@@ -51,7 +51,7 @@ button, input, textarea, select {
 /* Geist normal */
 @font-face {
   font-family: 'Geist';
-  src: url("../assets/fonts/Geist[wght].ttf") format("truetype");
+  src: url("../assets/fonts/Geist.ttf") format("truetype");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -60,7 +60,7 @@ button, input, textarea, select {
 /* Geist italic */
 @font-face {
   font-family: 'Geist';
-  src: url("../assets/fonts/Geist-Italic[wght].ttf") format("truetype");
+  src: url("../assets/fonts/Geist-Italic.ttf") format("truetype");
   font-weight: 100 900;
   font-style: italic;
   font-display: swap;
@@ -69,7 +69,7 @@ button, input, textarea, select {
 /* GeistMono normal */
 @font-face {
   font-family: 'GeistMono';
-  src: url("../assets/fonts/GeistMono[wght].ttf") format("truetype");
+  src: url("../assets/fonts/GeistMono.ttf") format("truetype");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -78,7 +78,7 @@ button, input, textarea, select {
 /* GeistMono italic */
 @font-face {
   font-family: 'GeistMono';
-  src: url("../assets/fonts/GeistMono-Italic[wght].ttf") format("truetype");
+  src: url("../assets/fonts/GeistMono-Italic.ttf") format("truetype");
   font-weight: 100 900;
   font-style: italic;
   font-display: swap;
