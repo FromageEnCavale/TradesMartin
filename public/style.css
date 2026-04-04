@@ -1,3 +1,91 @@
+/* ----- RESET CSS ----- */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overscroll-behavior: none;
+}
+
+html, body {
+  width: 100%;
+  /*height: 100%;*/
+  font-size: 100%;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+button, input, textarea, select {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    resize: none;
+    outline: none;
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* ----- FONTS ----- */
+
+/* Geist normal */
+@font-face {
+  font-family: 'Geist';
+  src: url("../assets/fonts/Geist[wght].ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Geist italic */
+@font-face {
+  font-family: 'Geist';
+  src: url("../assets/fonts/Geist-Italic[wght].ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* GeistMono normal */
+@font-face {
+  font-family: 'GeistMono';
+  src: url("../assets/fonts/GeistMono[wght].ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* GeistMono italic */
+@font-face {
+  font-family: 'GeistMono';
+  src: url("../assets/fonts/GeistMono-Italic[wght].ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ----- COLORS ----- */
+
 :root {
     --color-bg: #0e0e10;
     --color-surface: #161618;
@@ -8,8 +96,8 @@
     --color-text: #e0e0e8;
     --color-white: #ffffff;
 
-    --font-sans: "IBM Plex Sans", sans-serif;
-    --font-mono: "IBM Plex Mono", monospace;
+    --font-sans: "Geist", sans-serif;
+    --font-mono: "GeistMono", monospace;
 
     --space-1: 4px;
     --space-2: 8px;
@@ -26,27 +114,25 @@
     --card-accent-height: 2px;
 }
 
-*,
-*::before,
-*::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    border-radius: 0 !important;
-}
+/* ----- BODY ----- */
 
 body {
-    font-family: var(--font-sans);
-    background-color: var(--color-bg);
-    color: var(--color-text);
-    min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    /*min-height: 100dvh;*/
     padding-block: var(--space-8);
     padding-inline: var(--space-4);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    font-family: var(--font-sans);
+    line-height: 1.4;
+    font-weight: 400;
+    font-size: 16px;
 }
+
+/* ----- MAIN ----- */
 
 main {
     display: flex;
