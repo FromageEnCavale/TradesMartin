@@ -6,96 +6,82 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="Trades Martin">
         <link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon">
-        <link rel="icon" type="image/png" sizes="64x64" href="assets/icons/64.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/16.png">
         <link rel="stylesheet" href="style.css">
         <title>Trades Martin</title>
     </head>
     <body>
         <main>
+
             <!-- ── Total P&L ── -->
-            <header class="summary">
-                <p class="summary__label">Profit / Perte total</p>
+            <div class="pnl-total">
+                <p class="pnl-total__label">Profit / Perte total</p>
                 <p class="summary__amount" id="totalPnl">—</p>
-                <p class="summary__time" id="totalTime">Chargement…</p>
-            </header>
+                <p class="pnl-total__time" id="totalTime">Chargement…</p>
+            </div>
 
             <!-- ── Position cards ── -->
-            <section class="positions">
+            <div class="positions">
+
                 <article class="card" id="cardBrent">
-                    <header class="card__head">
+                    <div class="card__head">
                         <h2 class="card__name">Brent</h2>
                         <span class="badge badge--long">LONG</span>
-                    </header>
-
-                    <div class="card__prices">
-                        <div class="price">
-                            <span class="price__label">Entrée</span>
-                            <span class="price__value">109 515,00 $</span>
-                        </div>
-                        <div class="price price--right">
-                            <span class="price__label">Actuel</span>
-                            <span
-                                class="price__value price__value--live"
-                                id="brentPrice"
-                                >—</span
-                            >
-                        </div>
                     </div>
-
-                    <footer class="card__result">
+                    <dl class="card__prices">
+                        <div>
+                            <dt>Entrée</dt>
+                            <dd>109 515,00 $</dd>
+                        </div>
+                        <div class="right">
+                            <dt>Actuel</dt>
+                            <dd class="live" id="brentPrice">—</dd>
+                        </div>
+                    </dl>
+                    <div class="card__result">
                         <span class="result__label">Résultat</span>
                         <div class="result__values">
                             <span class="result__usd" id="brentPnl">—</span>
                             <span class="result__pct" id="brentPct"></span>
                         </div>
-                    </footer>
+                    </div>
                 </article>
 
                 <article class="card" id="cardBtc">
-                    <header class="card__head">
+                    <div class="card__head">
                         <h2 class="card__name">Bitcoin</h2>
                         <span class="badge badge--short">SHORT</span>
-                    </header>
-
-                    <div class="card__prices">
-                        <div class="price">
-                            <span class="price__label">Entrée</span>
-                            <span class="price__value">67 806,75 $</span>
-                        </div>
-                        <div class="price price--right">
-                            <span class="price__label">Actuel</span>
-                            <span
-                                class="price__value price__value--live"
-                                id="btcPrice"
-                                >—</span
-                            >
-                        </div>
                     </div>
-
-                    <footer class="card__result">
+                    <dl class="card__prices">
+                        <div>
+                            <dt>Entrée</dt>
+                            <dd>67 806,75 $</dd>
+                        </div>
+                        <div class="right">
+                            <dt>Actuel</dt>
+                            <dd class="live" id="btcPrice">—</dd>
+                        </div>
+                    </dl>
+                    <div class="card__result">
                         <span class="result__label">Résultat</span>
                         <div class="result__values">
                             <span class="result__usd" id="btcPnl">—</span>
                             <span class="result__pct" id="btcPct"></span>
                         </div>
-                    </footer>
+                    </div>
                 </article>
-            </section>
+
+            </div>
 
             <!-- ── Status bar ── -->
             <footer class="statusbar">
                 <div class="statusbar__left">
                     <span class="dot" id="dot"></span>
-                    <span class="statusbar__text" id="statusTxt"
-                        >Chargement…</span
-                    >
+                    <span id="statusTxt">Chargement…</span>
                 </div>
-                <span class="statusbar__source">Hyperliquid L1</span>
+                <span>Hyperliquid L1</span>
             </footer>
-        </main>
 
+        </main>
         <script src="main.js"></script>
     </body>
 </html>
