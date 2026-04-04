@@ -121,7 +121,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    /*min-height: 100dvh;*/
+    min-height: 100dvh;
     padding-block: var(--space-8);
     padding-inline: var(--space-4);
     color: var(--color-text);
