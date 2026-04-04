@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap');
+
 /* ----- RESET CSS ----- */
 
 *, *::before, *::after {
@@ -46,44 +48,6 @@ button, input, textarea, select {
     -moz-appearance: none;
 }
 
-/* ----- FONTS ----- */
-
-/* Geist normal */
-@font-face {
-  font-family: 'Geist';
-  src: url("../assets/fonts/Geist.ttf") format("truetype");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Geist italic */
-@font-face {
-  font-family: 'Geist';
-  src: url("../assets/fonts/Geist-Italic.ttf") format("truetype");
-  font-weight: 100 900;
-  font-style: italic;
-  font-display: swap;
-}
-
-/* GeistMono normal */
-@font-face {
-  font-family: 'GeistMono';
-  src: url("../assets/fonts/GeistMono.ttf") format("truetype");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* GeistMono italic */
-@font-face {
-  font-family: 'GeistMono';
-  src: url("../assets/fonts/GeistMono-Italic.ttf") format("truetype");
-  font-weight: 100 900;
-  font-style: italic;
-  font-display: swap;
-}
-
 /* ----- COLORS ----- */
 
 :root {
@@ -124,9 +88,9 @@ body {
     color: var(--color-text);
     background-color: var(--color-bg);
     font-family: "Geist", sans-serif;
-    line-height: 1.4;
-    font-weight: 400;
-    font-size: 16px;
+    font-optical-sizing: auto;
+    font-weight: 100 900;
+    font-style: normal;
 }
 
 /* ----- MAIN ----- */
@@ -150,7 +114,7 @@ main {
 }
 
 .summary__label {
-    font-family: "GeistMono", monospace;
+    font-family: "Geist Mono", monospace;
     font-size: 10px;
     font-weight: 400;
     letter-spacing: 3px;
@@ -177,7 +141,7 @@ main {
 }
 
 .summary__time {
-    font-family: "GeistMono", monospace;
+    font-family: "Geist Mono", monospace;
     font-size: 10px;
     font-weight: 300;
     letter-spacing: 1px;
@@ -248,7 +212,7 @@ main {
 }
 
 .badge {
-    font-family: "GeistMono", monospace;
+    font-family: "Geist Mono", monospace;
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 2px;
@@ -290,7 +254,7 @@ main {
 }
 
 .price__label {
-    font-family: "GeistMono", monospace;
+    font-family: "Geist Mono", monospace;
     font-size: 9px;
     font-weight: 400;
     letter-spacing: 2px;
@@ -299,7 +263,7 @@ main {
 }
 
 .price__value {
-    font-family: "GeistMono", monospace;
+    font-family: "Geist Mono", monospace;
     font-size: clamp(13px, 3.5vw, 15px);
     font-weight: 400;
     color: var(--color-dim);
@@ -316,7 +280,7 @@ main {
 }
 
 .result__label {
-    font-family: "GeistMono", monospace;
+    font-family: "Geist Mono", monospace;
     font-size: 9px;
     font-weight: 400;
     letter-spacing: 2px;
@@ -349,7 +313,7 @@ main {
 }
 
 .result__pct {
-    font-family: "GeistMono", monospace;
+    font-family: "Geist Mono", monospace;
     font-size: 11px;
     font-weight: 300;
     color: var(--color-dim);
@@ -399,7 +363,7 @@ main {
 
 .statusbar__text,
 .statusbar__source {
-    font-family: "GeistMono", monospace;
+    font-family: "Geist Mono", monospace;
     font-size: 10px;
     font-weight: 400;
     letter-spacing: 0.5px;
