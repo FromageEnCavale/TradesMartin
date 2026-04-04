@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap");
 
 /* ── Reset ── */
 
@@ -19,17 +19,17 @@ html, body {
 /* ── Tokens ── */
 
 :root {
-    --bg:      #0c0c0e;
+    --bg: #0c0c0e;
     --surface: #111114;
-    --border:  #1e1e24;
-    --profit:  #28cf6e;
-    --loss:    #ec3c58;
-    --muted:   #3e3e4a;
-    --text:    #d4d4de;
-    --bright:  #ededf5;
+    --border: #1e1e24;
+    --profit: #28cf6e;
+    --loss: #ec3c58;
+    --muted: #3e3e4a;
+    --text: #d4d4de;
+    --bright: #ededf5;
 
-    --sp-1:  4px;
-    --sp-2:  8px;
+    --sp-1: 4px;
+    --sp-2: 8px;
     --sp-3: 12px;
     --sp-4: 16px;
     --sp-5: 20px;
@@ -37,9 +37,8 @@ html, body {
     --sp-8: 32px;
     --sp-10: 40px;
 
-    --max-w: 560px;
+    --max-w: 620px;
     --mono: "Geist Mono", monospace;
-    --sans: "Geist", sans-serif;
 }
 
 /* ── Body ── */
@@ -53,7 +52,7 @@ body {
     padding-inline: var(--sp-4);
     background: var(--bg);
     color: var(--text);
-    font-family: var(--sans);
+    font-family: var(--mono);
 }
 
 /* ── Main layout ── */
@@ -79,7 +78,6 @@ main {
 }
 
 .pnl-total__label {
-    font-family: var(--mono);
     font-size: 10px;
     font-weight: 400;
     letter-spacing: 3px;
@@ -91,17 +89,20 @@ main {
 .summary__amount {
     font-size: clamp(40px, 11vw, 64px);
     font-weight: 600;
-    letter-spacing: -2px;
     line-height: 1;
     color: var(--muted);
     transition: color 0.5s ease;
 }
 
-.summary__amount.profit { color: var(--profit); }
-.summary__amount.loss   { color: var(--loss); }
+.summary__amount.profit {
+    color: var(--profit);
+}
+
+.summary__amount.loss {
+    color: var(--loss);
+}
 
 .pnl-total__time {
-    font-family: var(--mono);
     font-size: 10px;
     font-weight: 300;
     letter-spacing: 1px;
@@ -121,7 +122,11 @@ main {
 }
 
 @media (min-width: 500px) {
-    .positions { grid-template-columns: 1fr 1fr; }
+    
+    .positions {
+        grid-template-columns: 1fr 1fr;
+    }
+
 }
 
 /* ── Card ── */
@@ -132,17 +137,27 @@ main {
     gap: var(--sp-6);
     padding: var(--sp-5);
     background: var(--surface);
-    /* Inset box-shadow = no layout impact, no ::before needed */
     box-shadow: inset 0 2px 0 var(--border);
     transition: box-shadow 0.4s ease;
 }
 
 @media (min-width: 400px) {
-    .card { padding: var(--sp-6); }
+    
+    .card {
+        padding: var(--sp-6);
+    }
+
 }
 
-.card.profit { box-shadow: inset 0 2px 0 var(--profit); }
-.card.loss   { box-shadow: inset 0 2px 0 var(--loss); }
+/*
+.card.profit {
+    box-shadow: inset 0 2px 0 var(--profit);
+}
+
+.card.loss {
+    box-shadow: inset 0 2px 0 var(--loss);
+}
+*/
 
 /* ── Card head ── */
 
@@ -160,7 +175,6 @@ main {
 }
 
 .badge {
-    font-family: var(--mono);
     font-size: 9px;
     font-weight: 500;
     letter-spacing: 2px;
@@ -168,10 +182,16 @@ main {
     padding-inline: var(--sp-2);
     border: 1px solid currentColor;
     flex-shrink: 0;
+    color: var(--muted);
 }
 
-.badge--long  { color: var(--profit); }
-.badge--short { color: var(--loss); }
+.badge--long {
+    color: var(--profit);
+}
+
+.badge--short {
+    color: var(--loss);
+}
 
 /* ── Price pairs (dl > div > dt + dd) ── */
 
@@ -188,10 +208,11 @@ main {
     gap: var(--sp-2);
 }
 
-.card__prices > div.right { text-align: end; }
+.card__prices > div.right {
+    text-align: end;
+}
 
 .card__prices dt {
-    font-family: var(--mono);
     font-size: 9px;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -199,12 +220,13 @@ main {
 }
 
 .card__prices dd {
-    font-family: var(--mono);
     font-size: clamp(12px, 3.2vw, 14px);
     color: var(--muted);
 }
 
-.card__prices dd.live { color: var(--text); }
+.card__prices dd.live {
+    color: var(--text);
+}
 
 /* ── Card result ── */
 
@@ -215,7 +237,6 @@ main {
 }
 
 .result__label {
-    font-family: var(--mono);
     font-size: 9px;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -233,7 +254,6 @@ main {
 .result__usd {
     font-size: clamp(22px, 6vw, 28px);
     font-weight: 600;
-    letter-spacing: -0.5px;
     line-height: 1;
     color: var(--muted);
     transition: color 0.4s ease;
@@ -241,18 +261,29 @@ main {
 
 /* JS sets className = "result__pct profit|loss" */
 .result__pct {
-    font-family: var(--mono);
     font-size: 11px;
     font-weight: 300;
     color: var(--muted);
     transition: color 0.4s ease;
 }
 
-.result__usd.profit { color: var(--profit); }
-.result__usd.loss   { color: var(--loss); }
+.result__usd.profit {
+    color: var(--profit);
+}
 
-.result__pct.profit { color: var(--profit); opacity: 0.65; }
-.result__pct.loss   { color: var(--loss);   opacity: 0.65; }
+.result__usd.loss {
+    color: var(--loss);
+}
+
+.result__pct.profit {
+    color: var(--profit);
+    opacity: 0.65;
+}
+
+.result__pct.loss {
+    color: var(--loss);
+    opacity: 0.65;
+}
 
 /* ── Status bar ── */
 
@@ -270,9 +301,7 @@ main {
     gap: var(--sp-2);
 }
 
-.statusbar__left span,
-.statusbar > span {
-    font-family: var(--mono);
+.statusbar__left span, .statusbar > span {
     font-size: 10px;
     letter-spacing: 0.5px;
     color: var(--muted);
@@ -291,16 +320,34 @@ main {
     animation: blink 2s infinite;
 }
 
-.dot.err { background: var(--loss); }
+.dot.err {
+    background: var(--loss);
+}
 
 /* ── Animations ── */
 
 @keyframes rise {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
+    
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
 }
 
 @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.3; }
+    
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+
 }

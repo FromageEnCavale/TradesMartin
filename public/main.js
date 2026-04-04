@@ -1,8 +1,8 @@
 const POSITIONS = {
     brent: {
         symbol: "xyz:BRENTOIL",
-        entry: 109.515,
-        qty: 210,
+        entry: 109.55,
+        qty: 211,
         side: "long",
         decimals: 3,
         priceElId: "brentPrice",
@@ -12,8 +12,8 @@ const POSITIONS = {
     },
     btc: {
         symbol: "BTC",
-        entry: 67806.75,
-        qty: 0.51,
+        entry: 67805,
+        qty: 0.505,
         side: "short",
         decimals: 2,
         priceElId: "btcPrice",
