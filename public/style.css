@@ -96,9 +96,6 @@ button, input, textarea, select {
     --color-text: #e0e0e8;
     --color-white: #ffffff;
 
-    --font-sans: "Geist", sans-serif;
-    --font-mono: "GeistMono", monospace;
-
     --space-1: 4px;
     --space-2: 8px;
     --space-3: 12px;
@@ -126,7 +123,7 @@ body {
     padding-inline: var(--space-4);
     color: var(--color-text);
     background-color: var(--color-bg);
-    font-family: var(--font-sans);
+    font-family: "Geist", sans-serif;
     line-height: 1.4;
     font-weight: 400;
     font-size: 16px;
@@ -153,7 +150,7 @@ main {
 }
 
 .summary__label {
-    font-family: var(--font-mono);
+    font-family: "GeistMono", monospace;
     font-size: 10px;
     font-weight: 400;
     letter-spacing: 3px;
@@ -162,7 +159,7 @@ main {
 }
 
 .summary__amount {
-    font-family: var(--font-sans);
+    font-family: "Geist", sans-serif;
     font-size: clamp(40px, 11vw, 64px);
     font-weight: 600;
     letter-spacing: -2px;
@@ -180,7 +177,7 @@ main {
 }
 
 .summary__time {
-    font-family: var(--font-mono);
+    font-family: "GeistMono", monospace;
     font-size: 10px;
     font-weight: 300;
     letter-spacing: 1px;
@@ -251,7 +248,7 @@ main {
 }
 
 .badge {
-    font-family: var(--font-mono);
+    font-family: "GeistMono", monospace;
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 2px;
@@ -293,7 +290,7 @@ main {
 }
 
 .price__label {
-    font-family: var(--font-mono);
+    font-family: "GeistMono", monospace;
     font-size: 9px;
     font-weight: 400;
     letter-spacing: 2px;
@@ -302,7 +299,7 @@ main {
 }
 
 .price__value {
-    font-family: var(--font-mono);
+    font-family: "GeistMono", monospace;
     font-size: clamp(13px, 3.5vw, 15px);
     font-weight: 400;
     color: var(--color-dim);
@@ -319,7 +316,7 @@ main {
 }
 
 .result__label {
-    font-family: var(--font-mono);
+    font-family: "GeistMono", monospace;
     font-size: 9px;
     font-weight: 400;
     letter-spacing: 2px;
@@ -352,7 +349,7 @@ main {
 }
 
 .result__pct {
-    font-family: var(--font-mono);
+    font-family: "GeistMono", monospace;
     font-size: 11px;
     font-weight: 300;
     color: var(--color-dim);
@@ -402,7 +399,7 @@ main {
 
 .statusbar__text,
 .statusbar__source {
-    font-family: var(--font-mono);
+    font-family: "GeistMono", monospace;
     font-size: 10px;
     font-weight: 400;
     letter-spacing: 0.5px;
