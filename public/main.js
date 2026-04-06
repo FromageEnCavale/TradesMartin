@@ -1,10 +1,10 @@
 const POSITIONS = {
     brent: {
-        symbol: "xyz:BRENTOIL",
+        symbol: "xyz:CL",
         entry: 109.55,
         qty: 211,
         side: "long",
-        decimals: 3,
+        decimals: 2,
         priceElId: "brentPrice",
         pnlElId: "brentPnl",
         pctElId: "brentPct",
